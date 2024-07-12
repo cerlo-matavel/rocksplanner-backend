@@ -12,7 +12,8 @@ public class ParticipantService {
 
     }
 
-    public void triggerConfirmationEmaliToParticipants(UUID tripId){
+    //Responsável por recuperar todos os participantes da viagem e mandar emails para estes
+    public void triggerConfirmationEmailToParticipants(UUID tripId){
 
     }
 }
