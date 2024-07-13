@@ -1,4 +1,4 @@
-package com.rocketseat.planner.trip;
+package com.xebec.planner.trip;
 
 /*Sempre que tenho dados que são imutáveis, isto é, que não precisarão de ser alterados depois de serem criados, posso
 simplesmente usar as classes record. Essas classes já disponibilizam getters, setters e por aí fora*/

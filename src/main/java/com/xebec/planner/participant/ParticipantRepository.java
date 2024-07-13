@@ -1,4 +1,4 @@
-package com.rocketseat.planner.participant;
+package com.xebec.planner.participant;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 

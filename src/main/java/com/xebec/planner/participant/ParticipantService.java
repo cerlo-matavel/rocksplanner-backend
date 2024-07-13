@@ -1,6 +1,6 @@
-package com.rocketseat.planner.participant;
+package com.xebec.planner.participant;
 
-import com.rocketseat.planner.trip.Trip;
+import com.xebec.planner.trip.Trip;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.List;
@@ -15,7 +15,7 @@ public class ParticipantService {
 
     public void registerParticipantsToTrip(List<String> participantsToInvite, Trip trip){
         List<Participant> participants = participantsToInvite.stream().map(email -> new Participant(email, trip))
-                .collect(Collectors.toList());
+                .toList();
         ;
         this.participantRepository.saveAll(participants);
 
@@ -26,7 +26,6 @@ public class ParticipantService {
 
     //Responsável por recuperar todos os participantes da viagem e mandar emails para estes
     public void triggerConfirmationEmailToParticipants(UUID tripId){}
-
 
     public void triggerConfirmationEmailToParticipant(String email){}
 

@@ -1,4 +1,4 @@
-package com.rocketseat.planner.trip;
+package com.xebec.planner.trip;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;

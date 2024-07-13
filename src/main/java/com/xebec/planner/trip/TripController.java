@@ -1,6 +1,9 @@
-package com.rocketseat.planner.trip;
+package com.xebec.planner.trip;
 
-import com.rocketseat.planner.participant.*;
+import com.xebec.planner.participant.ParticipantCreateResponse;
+import com.xebec.planner.participant.ParticipantData;
+import com.xebec.planner.participant.ParticipantRequestPayload;
+import com.xebec.planner.participant.ParticipantService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,7 +12,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -31,19 +33,20 @@ public class TripController {
     }
 
     @PostMapping
-    public ResponseEntity<TripCreateResponsePayload> createTrip(@RequestBody TripRequestPayload payload){
+    public ResponseEntity<TripCreateResponse> createTrip(@RequestBody TripRequestPayload payload){
         /*É preciso criar uma classe com dados imutáveis(Record) que será usada para representar os dados que
         serão recebidos no request*/
 
         Trip newTrip = new Trip(payload);
 
         logger.info("New trip created: " + payload);
+
         this.tripRepository.save(newTrip);
 
         this.participantService.registerParticipantsToTrip(payload.emails_to_invite(), newTrip);
 
         return ResponseEntity.ok(
-                new TripCreateResponsePayload(newTrip.getId())
+                new TripCreateResponse(newTrip.getId())
         );
     }
 

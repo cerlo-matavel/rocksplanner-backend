@@ -1,4 +1,4 @@
-package com.rocketseat.planner.participant;
+package com.xebec.planner.participant;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -17,7 +17,6 @@ public class ParticipantController{
 
     @Autowired
     private ParticipantRepository participantRepository;
-
 
     @PostMapping("/{id}/confirm")
     public ResponseEntity<Participant> confirmParticipant(@PathVariable UUID id
