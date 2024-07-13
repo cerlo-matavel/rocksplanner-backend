@@ -1,5 +1,9 @@
 package com.xebec.planner.trip;
 
+import com.xebec.planner.activity.ActivityData;
+import com.xebec.planner.activity.ActivityRequestPayload;
+import com.xebec.planner.activity.ActivityResponse;
+import com.xebec.planner.activity.ActivityService;
 import com.xebec.planner.participant.ParticipantCreateResponse;
 import com.xebec.planner.participant.ParticipantData;
 import com.xebec.planner.participant.ParticipantRequestPayload;
@@ -26,10 +30,15 @@ public class TripController {
 //    @Autowired
     private TripRepository tripRepository;
 
+    private ActivityService activityService;
+
     @Autowired
-    public TripController(TripRepository tripRepository, ParticipantService participantService) {
+    public TripController(TripRepository tripRepository,
+                          ParticipantService participantService,
+                          ActivityService activityService) {
         this.tripRepository = tripRepository;
         this.participantService = participantService;
+        this.activityService = activityService;
     }
 
     @PostMapping
@@ -109,6 +118,28 @@ public class TripController {
             return ResponseEntity.ok(participantResponse);
         }
         return ResponseEntity.notFound().build();
+    }
+
+    @PostMapping("/{id}/activities")
+    public ResponseEntity<ActivityResponse> registerActivity(@PathVariable UUID id, @RequestBody ActivityRequestPayload payload){
+        Optional<Trip> trip = this.tripRepository.findById(id);
+
+        if(trip.isPresent()){
+            Trip rawTrip = trip.get();
+
+            ActivityResponse activityResponse = this.activityService.registerActivity(payload, rawTrip);
+
+            return ResponseEntity.ok(activityResponse);
+        }
+        return ResponseEntity.notFound().build();
+    }
+
+    @GetMapping("/{id}/activities")
+    public ResponseEntity<List<ActivityData>> getAllActivities(@PathVariable UUID id){
+
+        List<ActivityData> activityDataList = this.activityService.getAllActivitiesFromTrip(id);
+
+        return ResponseEntity.ok(activityDataList);
     }
 
     @GetMapping("/{id}/participants")
