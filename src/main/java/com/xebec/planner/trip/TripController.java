@@ -4,6 +4,10 @@ import com.xebec.planner.activity.ActivityData;
 import com.xebec.planner.activity.ActivityRequestPayload;
 import com.xebec.planner.activity.ActivityResponse;
 import com.xebec.planner.activity.ActivityService;
+import com.xebec.planner.link.LinkData;
+import com.xebec.planner.link.LinkRequestPayload;
+import com.xebec.planner.link.LinkResponse;
+import com.xebec.planner.link.LinkService;
 import com.xebec.planner.participant.ParticipantCreateResponse;
 import com.xebec.planner.participant.ParticipantData;
 import com.xebec.planner.participant.ParticipantRequestPayload;
@@ -25,22 +29,25 @@ import java.util.UUID;
 public class TripController {
 
     private Logger logger = LoggerFactory.getLogger(TripController.class);
-//    @Autowired
-    private ParticipantService participantService;
-//    @Autowired
-    private TripRepository tripRepository;
 
+    private ParticipantService participantService;
+    private TripRepository tripRepository;
     private ActivityService activityService;
+    private LinkService linkService;
 
     @Autowired
     public TripController(TripRepository tripRepository,
                           ParticipantService participantService,
-                          ActivityService activityService) {
+                          ActivityService activityService,
+                          LinkService linkService) {
         this.tripRepository = tripRepository;
         this.participantService = participantService;
         this.activityService = activityService;
+        this.linkService = linkService;
     }
 
+
+    // Trips
     @PostMapping
     public ResponseEntity<TripCreateResponse> createTrip(@RequestBody TripRequestPayload payload){
         /*É preciso criar uma classe com dados imutáveis(Record) que será usada para representar os dados que
@@ -104,6 +111,9 @@ public class TripController {
                 );
     }
 
+
+    //Participant
+
     @PostMapping("/{id}/invite")
     public ResponseEntity<ParticipantCreateResponse> inviteParticipant(@PathVariable UUID id, @RequestBody ParticipantRequestPayload payload){
         Optional<Trip> trip = this.tripRepository.findById(id);
@@ -119,6 +129,16 @@ public class TripController {
         }
         return ResponseEntity.notFound().build();
     }
+
+    @GetMapping("/{id}/participants")
+    public ResponseEntity<List<ParticipantData>> getAllParticipants(@PathVariable UUID id){
+        List<ParticipantData> participantList = this.participantService.getAllParticipantsFromTrip(id);
+
+        return ResponseEntity.ok(participantList);
+    }
+
+
+    //Activities
 
     @PostMapping("/{id}/activities")
     public ResponseEntity<ActivityResponse> registerActivity(@PathVariable UUID id, @RequestBody ActivityRequestPayload payload){
@@ -142,10 +162,27 @@ public class TripController {
         return ResponseEntity.ok(activityDataList);
     }
 
-    @GetMapping("/{id}/participants")
-    public ResponseEntity<List<ParticipantData>> getAllParticipants(@PathVariable UUID id){
-        List<ParticipantData> participantList = this.participantService.getAllParticipantsFromTrip(id);
 
-        return ResponseEntity.ok(participantList);
+    //Links
+    @PostMapping("/{id}/links")
+    public ResponseEntity<LinkResponse> registerLink(@PathVariable UUID id, @RequestBody LinkRequestPayload payload){
+        Optional<Trip> trip = this.tripRepository.findById(id);
+
+        if(trip.isPresent()){
+            Trip rawTrip = trip.get();
+
+            LinkResponse linkResponse = this.linkService.registerLink(payload, rawTrip);
+
+            return ResponseEntity.ok(linkResponse);
+        }
+        return ResponseEntity.notFound().build();
+    }
+
+    @GetMapping("/{id}/links")
+    public ResponseEntity<List<LinkData>> getAllLinks(@PathVariable UUID id){
+
+        List<LinkData> linkDataList = this.linkService.getAllLinksFromTrip(id);
+
+        return ResponseEntity.ok(linkDataList);
     }
 }
